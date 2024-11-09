@@ -14,6 +14,6 @@ declare module "pinolog" {
     export function warn(...args: unknown[]): void;
     export function error(...args: unknown[]): void;
 
-    export function createLogger(fileName: string): ILogger;
+    export function createLogger(fileName: string, dirName?: string): ILogger;
 
 }
