@@ -16,24 +16,32 @@ const createLogger = (fileName = "debug.log") => {
         log = (...args) => {
             pinoLogger.info({
                 logLevel: "log",
+                createdAt: new Date(),
+                createdBy: fileName,
                 args,
             });
         };
         info = (...args) => {
             pinoLogger.info({
                 logLevel: "info",
+                createdAt: new Date(),
+                createdBy: fileName,
                 args,
             });
         };
         warn = (...args) => {
             pinoLogger.warn({
                 logLevel: "warn",
+                createdAt: new Date(),
+                createdBy: fileName,
                 args,
             });
         };
         error = (...args) => {
             pinoLogger.error({
                 logLevel: "error",
+                createdAt: new Date(),
+                createdBy: fileName,
                 args,
             });
         };
