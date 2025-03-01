@@ -1,3 +1,9 @@
 import { logger } from './index.mjs';
 
-logger.log("Hello world")
+const main = async () => {
+    logger.log("Hello world")
+    await logger.destroy()
+    console.log("Ok");
+}
+
+main();

@@ -2,19 +2,35 @@ import pino from "pino";
 
 import { Module } from 'module';
 
-import { join } from 'path';
-
 const require = Module.createRequire(import.meta.url);
 
-const createLogger = (fileName = "debug.log", dirName = join(process.cwd(), 'logs')) => {
-    const pinoLogger = pino({
-        transport: {
-          target: require.resolve('./logger.mjs'),
-          options: { filename: fileName, path: dirName },
-        },
+const createLogger = (fileName = "debug.log") => {
+
+    const pinoTransport = pino.transport({
+        target: require.resolve('./logger.mjs'),
+        options: { filename: fileName },
+    })
+
+    const pinoLogger = pino(pinoTransport);
+
+    const flush = () => new Promise((res, rej) => {
+        if (!pinoLogger.flush) {
+            res();
+            return;
+        }
+        pinoLogger.flush((error) => {
+            if (error) {
+                rej(error);
+                return
+            }
+            res();
+        })
     });
 
     return new class {
+        flush = async () => {
+            await flush();
+        };
         log = (...args) => {
             pinoLogger.info({
                 logLevel: "log",
@@ -47,11 +63,15 @@ const createLogger = (fileName = "debug.log", dirName = join(process.cwd(), 'log
                 args,
             });
         };
+        destroy = async () => {
+            await flush();
+            pinoTransport.end();
+        };
     }
 }
 
 const logger = createLogger();
 
-export const { error, info, log, warn } = logger;
+export const { error, info, log, warn, destroy } = logger;
 
 export { logger, createLogger };
