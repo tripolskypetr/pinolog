@@ -2,13 +2,15 @@ import pino from "pino";
 
 import { Module } from 'module';
 
+import { join } from 'path';
+
 const require = Module.createRequire(import.meta.url);
 
-const createLogger = (fileName = "debug.log") => {
+const createLogger = (fileName = "debug.log", dirName = join(process.cwd(), 'logs')) => {
 
     const pinoTransport = pino.transport({
         target: require.resolve('./logger.mjs'),
-        options: { filename: fileName },
+        options: { filename: fileName, path: dirName },
     })
 
     const pinoLogger = pino(pinoTransport);
